@@ -1,0 +1,64 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JARVIS | Personal AI</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:radial-gradient(circle at center,#092c50,#020711 70%);color:#6cecff;font-family:Arial,sans-serif;text-align:center;padding:24px 16px}
+h1{font-size:36px;letter-spacing:8px;text-shadow:0 0 18px #00cfff;margin-top:36px}
+.sub{letter-spacing:4px;color:#8baec5;font-size:12px}
+.arc{width:220px;height:220px;border:2px solid #17cfff;border-radius:50%;margin:38px auto;display:flex;align-items:center;justify-content:center;box-shadow:0 0 30px #007fa8,inset 0 0 25px #007fa8;position:relative}
+.arc:before,.arc:after{content:"";position:absolute;border:1px dashed #48dcff;border-radius:50%;inset:13px}
+.arc:after{inset:30px;border-style:solid;opacity:.5}
+.core{font-size:48px;text-shadow:0 0 20px #00cfff}
+button{background:#07334b;border:1px solid #40dfff;color:#8af2ff;border-radius:10px;padding:14px 18px;font-size:16px;margin:6px;box-shadow:0 0 12px #005a7a}
+button:active{background:#12617d}
+#status{margin:20px auto;padding:15px;border:1px solid #176080;border-radius:10px;max-width:500px;min-height:54px}
+input{width:90%;max-width:500px;background:#071827;color:#c5f8ff;border:1px solid #2785a5;padding:14px;border-radius:9px;font-size:16px}
+.small{font-size:12px;color:#7899ad;line-height:1.6;margin-top:25px}
+</style>
+</head>
+<body>
+<div class="sub">PERSONAL ASSISTANT SYSTEM</div>
+<h1>J.A.R.V.I.S.</h1>
+<div class="sub">JUST A RATHER VERY INTELLIGENT SYSTEM</div>
+<div class="arc"><div class="core">✦</div></div>
+<div id="status">Systems online. Welcome back, sir.</div>
+<button onclick="listen()">🎙 SPEAK TO JARVIS</button>
+<button onclick="speak('At your service, sir.')">🔊 TEST VOICE</button>
+<p><input id="cmd" placeholder="Type a command..." /></p>
+<button onclick="run()">EXECUTE COMMAND</button>
+<div class="small">JARVIS PERSONAL HUD · WEB PROTOTYPE<br>Voice support depends on your browser and permissions.</div>
+<script>
+function speak(t){
+ document.getElementById('status').textContent=t;
+ if('speechSynthesis' in window){speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(t);u.lang='en-US';speechSynthesis.speak(u)}
+}
+function run(){
+ let c=document.getElementById('cmd').value.trim().toLowerCase();
+ if(!c)return;
+ if(c.includes('hello')||c.includes('hi'))speak('Hello, sir. JARVIS is online.');
+ else if(c.includes('time'))speak('The time is '+new Date().toLocaleTimeString());
+ else if(c.includes('date'))speak('Today is '+new Date().toLocaleDateString());
+ else if(c.includes('who are you'))speak('I am JARVIS, your personal assistant prototype.');
+ else if(c.includes('help'))speak('Try hello, time, date, or who are you.');
+ else speak('I heard your command: '+c+'. More abilities can be added later.');
+}
+function listen(){
+ const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+ if(!SR){speak('Speech recognition is not supported here. Please type your command.');return}
+ try{
+  const r=new SR();r.lang='en-US';r.interimResults=false;r.maxAlternatives=1;
+  document.getElementById('status').textContent='Listening...';
+  r.onresult=e=>{document.getElementById('cmd').value=e.results[0][0].transcript;run()};
+  r.onerror=e=>{document.getElementById('status').textContent='Voice error: '+e.error+'. You can type a command below.'};
+  r.onend=()=>{};
+  r.start();
+ }catch(e){document.getElementById('status').textContent='Could not start microphone. Please type a command.'}
+}
+</script>
+</body>
+</html>
